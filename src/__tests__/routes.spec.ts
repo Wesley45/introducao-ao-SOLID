@@ -30,7 +30,8 @@ describe("[POST] /users", () => {
       })
       .expect(400);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("User already exists");
   });
 });
 
@@ -57,7 +58,8 @@ describe("[PATCH] /users/:user_id/admin", () => {
       .patch(`/users/${v4()}/admin`)
       .expect(404);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("User not exists");
   });
 });
 
@@ -88,7 +90,8 @@ describe("[GET] /users/:user_id", () => {
   it("should not be able to show profile of a non existing user", async () => {
     const response = await request(app).get(`/users/${v4()}`).expect(404);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("User not exists");
   });
 });
 
@@ -143,7 +146,10 @@ describe("[GET] /users", () => {
       .set("user_id", user.id)
       .expect(400);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Permission denied, you dont have permission"
+    );
   });
 
   it("should not be able to a non admin user get list of all users", async () => {
@@ -159,7 +165,10 @@ describe("[GET] /users", () => {
       .set("user_id", user.id)
       .expect(400);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "Permission denied, you dont have permission"
+    );
   });
 
   it("should not be able to a non existing user get list of all users", async () => {
@@ -168,6 +177,7 @@ describe("[GET] /users", () => {
       .set("user_id", v4())
       .expect(400);
 
-    expect(response.body.error).toBeTruthy();
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("User not found");
   });
 });
